@@ -1,20 +1,44 @@
+import { useRouter } from "next/router";
+import { useCallback } from "react";
 import { IconType } from "react-icons";
 
+import useCurrentUser from "@/hooks/useCurrentUser";
+import useLoginModel from "@/hooks/useLoginModel";
 interface SidebarItemProps {
   label: string;
   href?: string;
   icon: IconType;
-  onClick?: () => void;
+  clickFn?: () => void;
+  isNeedAuth?: boolean;
 }
 
 const SidebarItem: React.FC<SidebarItemProps> = ({
   label,
   href,
   icon: Icon,
-  onClick
+  clickFn,
+  isNeedAuth
 }) => {
+  const loginModal = useLoginModel();
+  const router = useRouter();
+  const { data: currentUser } = useCurrentUser();
+
+  const handleClick = useCallback(() => {
+    // 存在click回调函数，则调用
+    if (clickFn) {
+      return clickFn();
+    }
+
+    // 如果这个路由需要登录才能使用 并且当前没有登录，则打开登录弹窗
+    if (isNeedAuth && !currentUser) {
+      loginModal.onOpen();
+    } else if (href) {
+      router.push(href);
+    }
+  }, [router, clickFn, href, isNeedAuth, currentUser, loginModal])
+
   return  (
-    <div className="flex flex-row items-center">
+    <div onClick={handleClick} className="flex flex-row items-center">
       {/* mobile */}
       <div
         className="

@@ -10,63 +10,58 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-// 定义User表
 model User {
-  id String @id @default(auto()) @map("_id") @db.ObjectId // 主键id
-  name String?
-  username String? @unique // field: username 可选 唯一
-  bio String?
-  email String? @unique
-  emailVerified DateTime?
-  image String?
-  coverImage String?
-  profileImage String?
-  hashedPassword String?
-  createAt DateTime @default(now())
-  updateAt DateTime @updatedAt
-  followingIds String[] @db.ObjectId
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  name            String?
+  username        String?   @unique
+  bio             String?
+  email           String?   @unique
+  emailVerified   DateTime?
+  image           String?
+  coverImage      String?
+  profileImage    String?
+  hashedPassword  String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  followingIds    String[] @db.ObjectId
   hasNotification Boolean?
 
-  // 关联关系
-  posts Post[]
-  comments Comment[]
+  posts         Post[]
+  comments      Comment[]
   notifications Notification[]
 }
 
-// 定义Post表
 model Post {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  body String
-  createAt DateTime @default(now())
-  updateAt DateTime @updatedAt
-  userId String @db.ObjectId
-  likeIds String[] @db.ObjectId
+  id                 String @id @default(auto()) @map("_id") @db.ObjectId
+  body               String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  userId             String @db.ObjectId
+  likedIds           String[] @db.ObjectId
+  image              String?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade) // 删除时级联这篇文章
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  comments Comment[] // 用户与评论的关系
+  comments          Comment[]
 }
 
-// 定义Comment表
 model Comment {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  body String
-  createAt DateTime @default(now())
-  updateAt DateTime @updatedAt
-  userId String @db.ObjectId
-  postId String @db.ObjectId
+  id                 String @id @default(auto()) @map("_id") @db.ObjectId
+  body               String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  userId             String @db.ObjectId
+  postId             String @db.ObjectId
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
 
-// 定义Notification表
 model Notification {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  body String
-  userId String @db.ObjectId
-  createAt DateTime @default(now())
+  id                 String @id @default(auto()) @map("_id") @db.ObjectId
+  body               String
+  userId             String @db.ObjectId
+  createdAt          DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

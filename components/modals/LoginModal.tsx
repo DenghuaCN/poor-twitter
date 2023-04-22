@@ -1,3 +1,5 @@
+import { signIn } from 'next-auth/react';
+
 import useLoginModel from "@/hooks/useLoginModel";
 import useRegisterModal from "@/hooks/useRegisterModal";
 
@@ -35,7 +37,10 @@ const LoginModal = () => {
     try {
       setIsLoading(true);
 
-      // TODO: ADD REGISTER
+      signIn('credentials', {
+        password,
+        email,
+      })
 
       LoginModal.onClose();
     } catch (error) {
@@ -43,7 +48,7 @@ const LoginModal = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [LoginModal])
+  }, [LoginModal, email, password])
 
   /**
    * @desc 弹窗主体渲染内容
@@ -57,6 +62,7 @@ const LoginModal = () => {
         disabled={isLoading}
       />
       <Input
+        type="password"
         placeholder="Password"
         onChange={(e) => setPassword(e.target.value)}
         value={password}

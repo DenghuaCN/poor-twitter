@@ -1,4 +1,7 @@
+import axios from 'axios';
 import { useCallback, useState } from "react";
+import { toast } from 'react-hot-toast';
+import { signIn } from 'next-auth/react';
 
 import useRegisterModal from "@/hooks/useRegisterModal";
 import useLoginModel from "@/hooks/useLoginModel";
@@ -12,7 +15,7 @@ const RegisterModel = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
+  const [name, setName] = useState ('');
   const [username, setUsername] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -36,15 +39,28 @@ const RegisterModel = () => {
     try {
       setIsLoading(true);
 
-      // TODO: ADD REGISTER AND LOGIN
+      await axios.post('/api/register', {
+        email,
+        password,
+        username,
+        name
+      });
+
+      toast.success('Account created.');
+
+      signIn('credentials', {
+        email,
+        password,
+      })
 
       RegisterModel.onClose();
     } catch (error) {
+      toast.error('Something went wrong');
       console.error(error);
     } finally {
       setIsLoading(false);
     }
-  }, [RegisterModel])
+  }, [RegisterModel, email, password, username, name])
 
   /**
    * @desc 弹窗Content Slot渲染内容
@@ -74,6 +90,7 @@ const RegisterModel = () => {
       />
       {/* Password */}
       <Input
+        type="password"
         placeholder="Password"
         onChange={(e) => setPassword(e.target.value)}
         value={password}
