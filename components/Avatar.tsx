@@ -1,8 +1,9 @@
-import { useCallback } from "react";
+import { ReactEventHandler, useCallback } from "react";
 import { useRouter } from "next/router";
 
 import useUser from "@/hooks/useUser";
 import Image from "next/image";
+import { EventCallbacks } from "next-auth";
 
 interface AvatarProps {
   userId: string;
@@ -14,12 +15,15 @@ const Avatar: React.FC<AvatarProps> = ({ userId, isLarge, hasBorder }) => {
   const router = useRouter();
   const { data: fetchedUser } = useUser(userId);
 
-  const handleClick = useCallback((event: any) => {
+  /**
+   * @desc 点击头像跳转/users/[id]路由
+   * @param {ReactEventHandler}
+   */
+  const handleClick = useCallback((event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
 
     const url = `/users/${userId}`;
     router.push(url);
-
   }, [router, userId]);
 
   return (
@@ -41,7 +45,7 @@ const Avatar: React.FC<AvatarProps> = ({ userId, isLarge, hasBorder }) => {
         }}
         alt="Avatar"
         onClick={handleClick}
-        src={fetchedUser?.pofileImage || '/images/placeholder.png' }
+        src={fetchedUser?.profileImage || '/images/placeholder.png' }
       />
     </div>
   )
