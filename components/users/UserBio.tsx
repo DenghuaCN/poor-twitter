@@ -4,6 +4,8 @@ import { BiCalendar } from 'react-icons/bi';
 
 import useCurrentUser from "@/hooks/useCurrentUser";
 import useUser from "@/hooks/useUser";
+import useEditModal from '@/hooks/useEditModal';
+
 import Button from '../Button';
 
 interface UserBioProps {
@@ -13,6 +15,9 @@ interface UserBioProps {
 const UserBio: React.FC<UserBioProps> = ({ userId }) => {
   const { data: currentUser } = useCurrentUser();
   const { data: fetchedUser } = useUser(userId);
+
+  const editModel = useEditModal();
+
 
   /**
    * @function getCreatedAtFormat
@@ -45,7 +50,7 @@ const UserBio: React.FC<UserBioProps> = ({ userId }) => {
       <div className='flex justify-end p-2'>
         {
           currentUser?.id === userId ? (
-            <Button secondary label="Edit" onClick={() => {}} />
+            <Button secondary label="Edit" onClick={editModel.onOpen} />
           ) : (
             <Button secondary label='follow' onClick={() => {}} />
           )
