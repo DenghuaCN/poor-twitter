@@ -5,6 +5,7 @@ import { BiCalendar } from 'react-icons/bi';
 import useCurrentUser from "@/hooks/useCurrentUser";
 import useUser from "@/hooks/useUser";
 import useEditModal from '@/hooks/useEditModal';
+import useFollow from '@/hooks/useFollow';
 
 import Button from '../Button';
 
@@ -15,6 +16,7 @@ interface UserBioProps {
 const UserBio: React.FC<UserBioProps> = ({ userId }) => {
   const { data: currentUser } = useCurrentUser();
   const { data: fetchedUser } = useUser(userId);
+  const { isFollowing, toggleFollow } = useFollow(userId);
 
   const editModel = useEditModal();
 
@@ -50,9 +52,16 @@ const UserBio: React.FC<UserBioProps> = ({ userId }) => {
       <div className='flex justify-end p-2'>
         {
           currentUser?.id === userId ? (
+            // 当前用户，显示编辑
             <Button secondary label="Edit" onClick={editModel.onOpen} />
           ) : (
-            <Button secondary label='follow' onClick={() => {}} />
+            // 其他用户，显示Follow/UnFollow
+            <Button
+              onClick={toggleFollow}
+              label={ isFollowing? 'UnFollow' : 'Follow' }
+              secondary={!isFollowing}
+              outline={isFollowing}
+            />
           )
         }
       </div>
