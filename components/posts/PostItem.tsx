@@ -1,10 +1,11 @@
 import { useRouter } from "next/router";
 import { useCallback, useMemo } from "react";
-import { AiOutlineHeart, AiOutlineMessage } from "react-icons/ai";
 import { formatDistanceToNowStrict } from "date-fns";
+import { AiOutlineHeart, AiFillHeart, AiOutlineMessage } from "react-icons/ai";
 
 import useLoginModel from "@/hooks/useLoginModel";
 import useCurrentUser from "@/hooks/useCurrentUser";
+import useLike from "@/hooks/useLike";
 
 import Avatar from "../Avatar";
 
@@ -18,6 +19,14 @@ const PostItem: React.FC<PostItemProps> = ({ data, userId }) => {
   const loginModal = useLoginModel();
 
   const { data: currentUser } = useCurrentUser();
+
+  /**
+   * @desc like
+   */
+  const POST_ID = data.id;
+  const { hasLiked, toggleLike } = useLike({ postId: POST_ID, userId });
+
+
 
   /**
    * @desc click on Avatar
@@ -40,8 +49,13 @@ const PostItem: React.FC<PostItemProps> = ({ data, userId }) => {
   const onLike = useCallback((event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
 
-    loginModal.onOpen();
-  }, [loginModal]);
+    if (!currentUser) {
+      return loginModal.onOpen();
+    }
+
+    toggleLike();
+
+  }, [loginModal, currentUser, toggleLike]);
 
   /**
    * @desc 创建时间
@@ -53,6 +67,11 @@ const PostItem: React.FC<PostItemProps> = ({ data, userId }) => {
 
     return formatDistanceToNowStrict(new Date(data.createdAt));
   }, [data?.createdAt]);
+
+  /**
+   * @desc Like Icon
+   */
+  const LikeIcon = hasLiked ? AiFillHeart : AiOutlineHeart;
 
   return (
     <div
@@ -88,8 +107,8 @@ const PostItem: React.FC<PostItemProps> = ({ data, userId }) => {
               onClick={onLike}
               className="flex flex-row items-center text-neutral-500 gap-2 cursor-pointer transition hover:text-red-500"
             >
-              <AiOutlineHeart size={20} />
-              <p>{data.likes?.length || 0}</p>
+              <LikeIcon size={20} color={hasLiked ? 'red' : ''} />
+              <p>{data.likedIds?.length || 0}</p>
             </div>
           </div>
 

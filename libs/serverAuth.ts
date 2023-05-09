@@ -12,7 +12,7 @@ import prisma from '@/libs/prismadb';
 const serverAuth = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getServerSession(req, res, authOptions);
 
-  console.log('serverAuthAPI session:', session);
+  console.log('当前登录用户: session:', session);
 
   // if the user is not logged in
   if (!session?.user?.email) {
