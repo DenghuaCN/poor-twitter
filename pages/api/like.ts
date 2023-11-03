@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 import serverAuth from '@/libs/serverAuth';
 import prisma from '@/libs/prismadb';
+import createNewNotification from './common/createNewNotification';
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST' && req.method !== 'DELETE') {
@@ -31,6 +32,10 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 
     if (req.method === 'POST') {
       updatedLikeIds.push(currentUser.id);
+
+      // 添加新的通知
+      createNewNotification(postId, 'LIKE');
+
     } else if (req.method === 'DELETE') {
       updatedLikeIds = updatedLikeIds.filter((likedId) => likedId !== currentUser.id);
     }

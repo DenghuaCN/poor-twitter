@@ -1,0 +1,44 @@
+import { NextApiRequest, NextApiResponse } from "next";
+
+import prisma from '@/libs/prismadb';
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'GET') {
+    return res.status(405).end();
+  }
+
+  try {
+
+    const { userId } = req.query;
+
+    if (!userId || typeof userId !== 'string') {
+       throw new Error("Invalid ID");
+    }
+
+    const notification = await prisma.notification.findMany({
+      where: {
+        userId
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+
+    // 点击通知后，更新通知状态
+    await prisma.user.update({
+      where: {
+        id: userId
+      },
+      data: {
+        hasNotification: false
+      }
+    });
+
+     return res.status(200).json(notification);
+
+  } catch (error) {
+    console.log(error);
+    return res.status(400).end();
+  }
+
+}

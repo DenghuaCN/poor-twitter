@@ -36,6 +36,28 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
     // follow
     if (req.method === 'POST') {
       updatedFollowingIds.push(userId);
+
+      // 有新的follower，更新通知状态
+      try {
+        await prisma.notification.create({
+          data: {
+            body: 'Someone followed you!',
+            userId
+          }
+        })
+
+        await prisma.user.update({
+          where: {
+            id: userId
+          },
+          data: {
+            hasNotification: true
+          }
+        })
+      } catch (error) {
+        console.log(error);
+      }
+
     }
     // UnFollow
     if (req.method === 'DELETE') {
