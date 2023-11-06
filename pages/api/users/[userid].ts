@@ -42,8 +42,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
     })
 
   } catch (error:any) {
-    // console.error(error);
-    throw new Error(error);
-    // return res.status(400).end();
+    console.error(error);
+    return res.status(400).end();
   }
 }
