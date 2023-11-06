@@ -43,6 +43,6 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 
   } catch (error) {
     console.error(error);
-    return res.status(400).end();
+    return res.status(400).json(JSON.stringify(error));
   }
 }
