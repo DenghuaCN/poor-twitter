@@ -20,18 +20,14 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
     }
 
     // find the user
-    const existingUser: any = await prisma.user.findUnique({
+    const existingUser = await prisma.user.findUnique({
       where: {
         id: userId
       }
     })
 
-    if (!existingUser) {
-      throw new Error(existingUser);
-    }
-
     // find the followers of current user
-    const followersCount: any = await prisma.user.count({
+    const followersCount = await prisma.user.count({
       // 从user表中查询followingIds字段中存在当前用户的用户个数
       where: {
         followingIds: {
@@ -40,10 +36,6 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
       }
     })
 
-    if (typeof followersCount !== 'number') {
-      throw new Error(existingUser);
-    }
-
     return res.status(200).json({
       ...existingUser, // 根据querystring的userId查询此user并返回信息
       followersCount   // 当前user的订阅者
@@ -51,6 +43,6 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 
   } catch (error) {
     console.error(error);
-    return res.status(400).json(error);
+    return res.status(400).end();
   }
 }
